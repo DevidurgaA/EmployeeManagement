@@ -2,7 +2,7 @@ package com.theatmo.databaseconnection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Properties;
+import java.util.Map;
 
 import com.theatmo.exception.ConnectionNotFoundException;
 
@@ -13,6 +13,8 @@ import com.theatmo.exception.ConnectionNotFoundException;
  */
 public class DBConnection {
 
+    public static Map<String, String> databaseproperty;
+
     /**
      * Determines the connection for database 
      *    
@@ -20,19 +22,23 @@ public class DBConnection {
      */
     public Connection getConnection() {
 
-        final Properties property = PropertiesFile.readProperties();
-        final String url = property.getProperty("karaf.jdbc.url");
-        final String user = property.getProperty("karaf.jdbc.user");
-        final String password = property.getProperty("karaf.jdbc.password");
-
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            final Connection connection = DriverManager.getConnection(url, user, password);
+            final Connection connection = DriverManager.getConnection(databaseproperty.get("database.url"), databaseproperty.get("database.user"), databaseproperty.get("database.password"));
 
             return connection;
         } catch (Exception exception) {
             throw new ConnectionNotFoundException("Connection failed");
         }
+     }
+
+    /**
+     * Gets the properties for database
+     *
+     * @return connection
+     */
+     public static void databaseConnection(Map<String, String> properties) {
+         databaseproperty = properties;
      }
 
 }
